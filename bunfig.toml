@@ -1,0 +1,4 @@
+[test]
+coverage = true # Always enable coverage
+# Uncomment to set a minimum coverage threshold
+# coverageThreshold = 0.8
