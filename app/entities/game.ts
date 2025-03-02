@@ -22,8 +22,8 @@ export class Game {
 		for (let event of events) this.triggerEvent(event);
 
 		this.state.units += this.activeEvent
-			? this.activeEvent.event.effect(this.productionPerClick)
-			: this.productionPerClick;
+			? this.activeEvent.event.effect(this.productionPerSecond)
+			: this.productionPerSecond;
 
 		this.clearEvent();
 
@@ -36,6 +36,10 @@ export class Game {
 
 	get achievements() {
 		return achievements.filter((achievement) => achievement.condition(this));
+	}
+
+	get lockedAchievements() {
+		return achievements.filter((achievement) => !achievement.condition(this));
 	}
 
 	get event() {
@@ -54,16 +58,24 @@ export class Game {
 		let upgrades = Object.values(this.upgrades);
 
 		let base = upgrades
-			.filter((upgrade) => upgrade.production.perSecond > 0)
+			.filter(
+				(upgrade) => upgrade.production.perSecond > 0 && upgrade.level > 0,
+			)
 			.reduce((acc, upgrade) => {
 				return acc + upgrade.production.perSecond * upgrade.level;
 			}, 0);
 
-		return upgrades
-			.filter((upgrade) => upgrade.production.boostPercentage > 0)
-			.reduce((acc, upgrade) => {
-				return acc * upgrade.production.boostPercentage;
-			}, base);
+		let boosters = upgrades.filter(
+			(upgrade) => upgrade.production.boostPercentage > 0 && upgrade.level > 0,
+		);
+
+		if (boosters.length === 0) return Math.round(base);
+
+		let result = boosters.reduce((acc, upgrade) => {
+			return acc * upgrade.production.boostPercentage ** upgrade.level;
+		}, base);
+
+		return Math.round(result);
 	}
 
 	get productionPerClick() {

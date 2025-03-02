@@ -1,21 +1,18 @@
-import type { Achievement } from "app:entities/achievement";
-import type { Event } from "app:entities/event";
-import { Game } from "app:entities/game";
-import type { Upgrade } from "app:entities/upgrade";
+import { AchievementList } from "app:components/achievement-list";
+import { ActiveEvent } from "app:components/active-event";
+import { Stats } from "app:components/stats";
+import { Card, CardContent, CardHeader } from "app:components/ui/card";
 import {
-	StoreContext,
-	useAchievements,
-	useBuyUpgrades,
-	useClick,
-	useEvent,
-	useProductionPerClick,
-	useProductionPerSecond,
-	useTick,
-	useUnits,
-	useUpgrades,
-} from "app:hooks/use-store";
-import { Code2Icon } from "lucide-react";
-import { useEffect, useRef } from "react";
+	Tabs,
+	TabsContent,
+	TabsList,
+	TabsTrigger,
+} from "app:components/ui/tabs";
+import { UpgradeList } from "app:components/upgrade-list";
+import { Game } from "app:entities/game";
+import { StoreContext, useClick, useTick } from "app:hooks/use-store";
+import { TerminalIcon } from "lucide-react";
+import { useRef } from "react";
 
 export default function Component() {
 	let store = useRef(new Game());
@@ -24,31 +21,80 @@ export default function Component() {
 		<StoreContext value={store.current}>
 			<Tick />
 
-			<div
-				role="application"
-				className="w-full max-h-svh flex flex-col justify-between gap-2"
-			>
-				<header className="border-b border-white">
-					<Stats />
+			<div className="container mx-auto p-4 max-w-6xl">
+				<header className="py-6 text-center">
+					<h1 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-cyan-500">
+						Code Clicker
+					</h1>
+
+					<p className="text-gray-400 mt-2">
+						Click to write code and build your dev empire
+					</p>
 				</header>
 
-				<main className="w-full h-full grid grid-cols-12">
-					<div className="col-span-3 overflow-auto">
-						<AchievementList />
+				<ActiveEvent />
+
+				<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+					<div className="lg:col-span-2">
+						<Card className="bg-gray-900 border-gray-800">
+							<CardHeader className="pb-2">
+								<div className="flex justify-between items-center">
+									<Stats />
+
+									{/* <div className="flex gap-2">
+										<Button
+											variant="outline"
+											size="sm"
+											className="text-gray-300 border-gray-700"
+										>
+											Stats
+										</Button>
+										<Button
+											variant="outline"
+											size="sm"
+											className="text-gray-300 border-gray-700"
+										>
+											Settings
+										</Button>
+									</div> */}
+								</div>
+							</CardHeader>
+
+							<CardContent className="flex flex-col items-center justify-center pt-6 pb-10">
+								<UnitButton />
+							</CardContent>
+						</Card>
 					</div>
 
-					<div className="col-span-6 flex items-center justify-center">
-						<UnitButton />
-					</div>
+					{/* Side panel with tabs */}
+					<div className="lg:col-span-1">
+						<Tabs defaultValue="upgrades" className="w-full">
+							<TabsList className="grid w-full grid-cols-3 bg-gray-900 border-gray-800">
+								<TabsTrigger
+									value="upgrades"
+									className="data-[state=active]:bg-gray-800"
+								>
+									Team
+								</TabsTrigger>
 
-					<div className="col-span-3 overflow-auto">
-						<UpgradeList />
-					</div>
-				</main>
+								<TabsTrigger
+									value="achievements"
+									className="data-[state=active]:bg-gray-800"
+								>
+									Achievements
+								</TabsTrigger>
+							</TabsList>
 
-				<footer className="border-t border-white">
-					<ActiveEvent />
-				</footer>
+							<TabsContent value="upgrades" className="mt-2">
+								<UpgradeList />
+							</TabsContent>
+
+							<TabsContent value="achievements" className="mt-2">
+								<AchievementList />
+							</TabsContent>
+						</Tabs>
+					</div>
+				</div>
 			</div>
 		</StoreContext>
 	);
@@ -59,128 +105,17 @@ function Tick() {
 	return null;
 }
 
-function Stats() {
-	let units = useUnits();
-	let perSecond = useProductionPerSecond();
-	let perClick = useProductionPerClick();
-
-	let formatted = units.toLocaleString("en", {
-		maximumFractionDigits: 2,
-		minimumFractionDigits: 0,
-		compactDisplay: "long",
-		notation: "compact",
-	});
-
-	useEffect(() => {
-		document.title = `${formatted} LoC - Code Clicker`;
-	}, [formatted]);
-
-	return (
-		<div className="p-4 flex flex-col gap-2 tabular-nums">
-			<span>Units: {formatted}</span>
-			<span>
-				{perSecond.toLocaleString("en", {
-					maximumFractionDigits: 2,
-					minimumFractionDigits: 0,
-					compactDisplay: "long",
-					notation: "compact",
-				})}{" "}
-				per second
-			</span>
-			<span>
-				{perClick.toLocaleString("en", {
-					maximumFractionDigits: 2,
-					minimumFractionDigits: 0,
-					compactDisplay: "long",
-					notation: "compact",
-				})}{" "}
-				per click
-			</span>
-		</div>
-	);
-}
-
 function UnitButton() {
 	let click = useClick();
 
 	return (
 		<button
-			id="unit"
 			type="button"
+			id="unit"
 			onClick={click}
-			className="origin-center aspect-square size-48 bg-gradient-to-br from-purple-600 to-blue-600 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 mb-8 shadow-[0_0_30px_rgba(124,58,237,0.5)] rounded-full"
+			className="size-48 rounded-lg bg-gray-950 border-2 border-emerald-500/30 flex items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 active:scale-95 mb-8 shadow-[0_0_30px_rgba(16,185,129,0.2)]"
 		>
-			<Code2Icon className="size-40 text-white" />
+			<TerminalIcon className="size-16 mx-auto text-emerald-400 mb-2" />
 		</button>
-	);
-}
-
-function UpgradeList() {
-	let upgrades = useUpgrades();
-	return (
-		<div className="flex flex-col gap-2">
-			{Object.entries(upgrades).map(([name, upgrade]) => (
-				<UpgradeItem key={name} upgrade={upgrade} />
-			))}
-		</div>
-	);
-}
-
-function UpgradeItem({ upgrade }: { upgrade: Upgrade }) {
-	let buyUpgrade = useBuyUpgrades();
-	let costOfNextLevel = upgrade.costOfNextLevel;
-
-	let formatted = costOfNextLevel.toLocaleString("en", {
-		maximumFractionDigits: 2,
-		minimumFractionDigits: 0,
-		compactDisplay: "long",
-		notation: "compact",
-	});
-
-	return (
-		<div className="p-4 flex flex-col gap-2">
-			<span>
-				{upgrade.name} ({upgrade.level})
-			</span>
-
-			<button
-				className="upgrade"
-				type="button"
-				onClick={() => buyUpgrade(upgrade)}
-			>
-				Upgrade by {formatted} units
-			</button>
-		</div>
-	);
-}
-
-function AchievementList() {
-	let achievements = useAchievements();
-	return (
-		<div className="flex flex-col gap-2">
-			{achievements.map((achievement) => (
-				<AchievementItem key={achievement.name} achievement={achievement} />
-			))}
-		</div>
-	);
-}
-
-function AchievementItem({ achievement }: { achievement: Achievement }) {
-	return (
-		<div className="p-4 flex flex-col gap-2">
-			<span>{achievement.name}</span>
-			<span>{achievement.description}</span>
-		</div>
-	);
-}
-
-function ActiveEvent() {
-	let event = useEvent();
-	if (!event) return null;
-	return (
-		<div className="p-4 flex flex-col gap-2">
-			<span>{event.name}</span>
-			<span>{event.description}</span>
-		</div>
 	);
 }

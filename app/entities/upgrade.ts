@@ -38,6 +38,18 @@ export abstract class Upgrade {
 		return this.currentLevel;
 	}
 
+	get perSecond() {
+		return this.production.perSecond * this.level;
+	}
+
+	get perClick() {
+		return this.production.perClick * this.level;
+	}
+
+	get boostPercentage() {
+		return this.production.boostPercentage * this.level;
+	}
+
 	canBuy(units: number) {
 		return units >= this.costOfNextLevel;
 	}
@@ -172,7 +184,7 @@ export class UseV0 extends Upgrade {
 export class MassiveRefactoring extends Upgrade {
 	readonly name = "Massive Refactoring";
 	readonly cost = { base: 500_000, multiplier: 1.2 };
-	readonly production = { perSecond: 0, perClick: 0, boostPercentage: 1.1 };
+	readonly production = { perSecond: 0, perClick: 0, boostPercentage: 1.01 };
 
 	static get id() {
 		return MassiveRefactoring.name;
@@ -182,7 +194,7 @@ export class MassiveRefactoring extends Upgrade {
 export class CodeReview extends Upgrade {
 	readonly name = "Code Review";
 	readonly cost = { base: 2_000_000, multiplier: 1.25 };
-	readonly production = { perSecond: 0, perClick: 0, boostPercentage: 1.2 };
+	readonly production = { perSecond: 0, perClick: 0, boostPercentage: 1.02 };
 
 	static get id() {
 		return CodeReview.name;
@@ -192,7 +204,7 @@ export class CodeReview extends Upgrade {
 export class PairProgramming extends Upgrade {
 	readonly name = "Pair Programming";
 	readonly cost = { base: 10_000_000, multiplier: 1.3 };
-	readonly production = { perSecond: 0, perClick: 0, boostPercentage: 1.5 };
+	readonly production = { perSecond: 0, perClick: 0, boostPercentage: 1.05 };
 
 	static get id() {
 		return PairProgramming.name;

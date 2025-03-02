@@ -18,7 +18,7 @@ export function getDefaultState(): State {
 		record: { clicks: 0, units: 0 },
 		upgrades: new Map(
 			Object.entries(upgradesByName).map(([name, Upgrade]) => {
-				return [name, new Upgrade()] as const;
+				return [name, new Upgrade(0)] as const;
 			}),
 		),
 	};

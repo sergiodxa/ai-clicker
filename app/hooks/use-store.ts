@@ -41,6 +41,10 @@ export function useAchievements() {
 	return useSelector((store) => store.achievements);
 }
 
+export function useLockedAchievements() {
+	return useSelector((store) => store.lockedAchievements);
+}
+
 export function useEvent() {
 	return useSelector((store) => store.event);
 }
