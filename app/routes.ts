@@ -33,6 +33,8 @@ export default [
 		route("recover", "./views/auth/recover.tsx"),
 	]),
 
+	route("game", "./views/game.tsx"),
+
 	// Catch-all Route
 	route("*", "./views/catch-all.tsx"),
 ] satisfies RouteConfig;

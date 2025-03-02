@@ -21,7 +21,7 @@ export async function loader({ request }: Route.LoaderArgs) {
 export default function App() {
 	return (
 		<>
-			<title>Edge-first Starter Kit for React</title>
+			<title>AI Clicker</title>
 			<Outlet />
 		</>
 	);
