@@ -17,7 +17,7 @@ assets = { directory = "./build/client" }
 # Enables the Browser Rendering service
 # To use it locally, update the ./scripts/dev.ts file and add `--remote` after 
 # the `bun start` command
-browser = { binding = "BROWSER" }
+# browser = { binding = "BROWSER" }
 
 # To be able to use assets in your Worker, Smart placement needs to be off
 [placement]
