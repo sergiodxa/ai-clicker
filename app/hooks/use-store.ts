@@ -41,8 +41,8 @@ export function useAchievements() {
 	return useSelector((store) => store.achievements);
 }
 
-export function useActiveEvents() {
-	return useSelector((store) => store.activeEvents);
+export function useEvent() {
+	return useSelector((store) => store.event);
 }
 
 export function useProductionPerSecond() {

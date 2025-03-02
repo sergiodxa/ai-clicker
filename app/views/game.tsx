@@ -5,9 +5,9 @@ import type { Upgrade } from "app:entities/upgrade";
 import {
 	StoreContext,
 	useAchievements,
-	useActiveEvents,
 	useBuyUpgrades,
 	useClick,
+	useEvent,
 	useProductionPerClick,
 	useProductionPerSecond,
 	useTick,
@@ -28,7 +28,7 @@ export default function Component() {
 				role="application"
 				className="w-full max-h-svh flex flex-col justify-between gap-2"
 			>
-				<header className="col-span-12 border-b border-white">
+				<header className="border-b border-white">
 					<Stats />
 				</header>
 
@@ -46,8 +46,8 @@ export default function Component() {
 					</div>
 				</main>
 
-				<footer className="col-span-12 border-t border-white">
-					<EventList />
+				<footer className="border-t border-white">
+					<ActiveEvent />
 				</footer>
 			</div>
 		</StoreContext>
@@ -174,19 +174,9 @@ function AchievementItem({ achievement }: { achievement: Achievement }) {
 	);
 }
 
-function EventList() {
-	let activeEvents = useActiveEvents();
-
-	return (
-		<div className="flex flex-col gap-2">
-			{activeEvents.map((event) => (
-				<ActiveEvent key={event.name} event={event} />
-			))}
-		</div>
-	);
-}
-
-function ActiveEvent({ event }: { event: Event }) {
+function ActiveEvent() {
+	let event = useEvent();
+	if (!event) return null;
 	return (
 		<div className="p-4 flex flex-col gap-2">
 			<span>{event.name}</span>

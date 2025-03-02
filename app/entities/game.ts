@@ -4,13 +4,15 @@ import { events, type Event } from "./event";
 import { type State, getDefaultState } from "./state";
 import { type Upgrade, upgradesByName } from "./upgrade";
 
+interface ActiveEvent {
+	event: Event;
+	startAt: Date;
+}
+
 export class Game {
 	private state: State;
 	private emitter = new Emitter();
-	private activeEventList = new Map<
-		Event["name"],
-		{ event: Event; startAt: Date }
-	>();
+	private activeEvent: ActiveEvent | null = null;
 
 	constructor(initialState?: State) {
 		this.state = initialState ?? getDefaultState();
@@ -19,13 +21,11 @@ export class Game {
 	tick() {
 		for (let event of events) this.triggerEvent(event);
 
-		this.state.units += this.activeEvents.reduce((production, event) => {
-			return event.effect(production);
-		}, this.productionPerClick);
+		this.state.units += this.activeEvent
+			? this.activeEvent.event.effect(this.productionPerClick)
+			: this.productionPerClick;
 
-		for (let [, { event, startAt }] of this.activeEventList) {
-			this.clearEvent(event, startAt);
-		}
+		this.clearEvent();
 
 		this.emitter.emit();
 	}
@@ -38,16 +38,16 @@ export class Game {
 		return achievements.filter((achievement) => achievement.condition(this));
 	}
 
+	get event() {
+		return this.activeEvent?.event;
+	}
+
 	get units() {
 		return this.state.units;
 	}
 
 	get record() {
 		return Object.freeze(structuredClone(this.state.record));
-	}
-
-	get activeEvents() {
-		return Array.from(this.activeEventList).map(([, { event }]) => event);
 	}
 
 	get productionPerSecond() {
@@ -101,18 +101,22 @@ export class Game {
 	 * Check if an event should be triggered and add it to the active event list
 	 */
 	private triggerEvent(event: Event) {
-		if (this.activeEventList.has(event.name)) return;
+		if (this.activeEvent !== null) return;
 		if (event.condition(this) && Math.random() < event.probability) {
-			this.activeEventList.set(event.name, { event, startAt: new Date() });
+			this.activeEvent = { event, startAt: new Date() };
 		}
 	}
 
 	/**
 	 * Check if an event is expired and remove it from the active event list
 	 */
-	private clearEvent(event: Event, startAt: Date) {
+	private clearEvent() {
+		if (!this.activeEvent) return;
+
+		let { event, startAt } = this.activeEvent;
+
 		if (startAt.getTime() + event.duration * 1000 < Date.now()) {
-			this.activeEventList.delete(event.name);
+			this.activeEvent = null;
 		}
 	}
 
