@@ -14,13 +14,17 @@ export function AchievementList() {
 	let achievements = useAchievements();
 	let lockedAchievements = useLockedAchievements();
 
+	let achieved = achievements.length;
+	let locked = lockedAchievements.length;
+	let total = achieved + locked;
+
 	return (
 		<Card className="bg-gray-900 border-gray-800">
 			<CardHeader className="pb-2">
 				<CardTitle className="flex justify-between items-center">
 					<span className="text-white">Achievements</span>
 					<Badge variant="outline" className="text-amber-400 border-amber-400">
-						{achievements.length} Completed
+						{achieved}/{total} Completed
 					</Badge>
 				</CardTitle>
 				<CardDescription>
