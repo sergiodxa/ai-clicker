@@ -4,7 +4,7 @@ import { events, type Event } from "./event";
 import { type State, getDefaultState } from "./state";
 import { type Upgrade, upgradesByName } from "./upgrade";
 
-export class Store {
+export class Game {
 	private state: State;
 	private emitter = new Emitter();
 	private activeEventList = new Map<
@@ -14,6 +14,20 @@ export class Store {
 
 	constructor(initialState?: State) {
 		this.state = initialState ?? getDefaultState();
+	}
+
+	tick() {
+		for (let event of events) this.triggerEvent(event);
+
+		this.state.units += this.activeEvents.reduce((production, event) => {
+			return event.effect(production);
+		}, this.productionPerClick);
+
+		for (let [, { event, startAt }] of this.activeEventList) {
+			this.clearEvent(event, startAt);
+		}
+
+		this.emitter.emit();
 	}
 
 	get upgrades() {
@@ -65,20 +79,6 @@ export class Store {
 		return this.emitter.subscribe.bind(this.emitter);
 	}
 
-	tick() {
-		for (let event of events) this.triggerEvent(event);
-
-		this.state.units += this.activeEvents.reduce((production, event) => {
-			return event.effect(production);
-		}, this.productionPerClick);
-
-		for (let [, { event, startAt }] of this.activeEventList) {
-			this.clearEvent(event, startAt);
-		}
-
-		this.emitter.emit();
-	}
-
 	click() {
 		let production = this.productionPerClick;
 		this.state.record.clicks += production;
@@ -126,8 +126,8 @@ export class Store {
 		};
 	}
 
-	static fromJSON(json: ReturnType<Store["toJSON"]>) {
-		let store = new Store({
+	static fromJSON(json: ReturnType<Game["toJSON"]>) {
+		let store = new Game({
 			record: json.record,
 			units: json.units,
 			upgrades: new Map(

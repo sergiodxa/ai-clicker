@@ -1,4 +1,4 @@
-import { Store } from "app:entities/store";
+import { Game } from "app:entities/game";
 import type { Upgrade } from "app:entities/upgrade";
 import {
 	createContext,
@@ -10,14 +10,14 @@ import {
 } from "react";
 import { useInterval } from "./use-interval";
 
-export const StoreContext = createContext<Store>(new Store());
+export const StoreContext = createContext<Game>(new Game());
 
 export function useTick() {
 	let store = use(StoreContext);
 	useInterval(() => store.tick(), 1000);
 }
 
-function useSelector<T>(selector: (store: Store) => T) {
+function useSelector<T>(selector: (store: Game) => T) {
 	let store = use(StoreContext);
 	let [state, setState] = useState(() => selector(store));
 

@@ -1,6 +1,6 @@
 import type { Achievement } from "app:entities/achievement";
 import type { Event } from "app:entities/event";
-import { Store } from "app:entities/store";
+import { Game } from "app:entities/game";
 import type { Upgrade } from "app:entities/upgrade";
 import {
 	StoreContext,
@@ -18,7 +18,7 @@ import { Code2Icon } from "lucide-react";
 import { useEffect, useRef } from "react";
 
 export default function Component() {
-	let store = useRef(new Store());
+	let store = useRef(new Game());
 
 	return (
 		<StoreContext value={store.current}>

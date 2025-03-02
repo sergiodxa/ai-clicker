@@ -1,4 +1,4 @@
-import type { Store } from "./store";
+import type { Game } from "./game";
 
 export abstract class Event {
 	abstract name: string;
@@ -6,7 +6,7 @@ export abstract class Event {
 	abstract duration: number;
 	abstract probability: number;
 	abstract effect(production: number): number;
-	abstract condition(store: Store): boolean;
+	abstract condition(store: Game): boolean;
 }
 
 export class HackathonEvent extends Event {
@@ -19,7 +19,7 @@ export class HackathonEvent extends Event {
 		return production * 1.1;
 	}
 
-	condition(store: Store) {
+	condition(store: Game) {
 		return store.record.units >= 1000;
 	}
 }
@@ -34,7 +34,7 @@ export class AIConferenceEvent extends Event {
 		return production * 2;
 	}
 
-	condition(store: Store) {
+	condition(store: Game) {
 		return store.record.units >= 10000;
 	}
 }
@@ -49,7 +49,7 @@ export class NeuralNetworkTrainingEvent extends Event {
 		return production * 1.5;
 	}
 
-	condition(store: Store) {
+	condition(store: Game) {
 		return store.record.units >= 100000;
 	}
 }
@@ -64,7 +64,7 @@ export class QuantumComputingEvent extends Event {
 		return production * 2;
 	}
 
-	condition(store: Store) {
+	condition(store: Game) {
 		return store.record.units >= 1000000;
 	}
 }
